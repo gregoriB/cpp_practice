@@ -1,7 +1,6 @@
 #include <iostream>
-#include <limits>
+#include <string>
 #include <vector>
-#include <set>
 #include <unordered_set>
 class ListNode
 {
@@ -156,7 +155,7 @@ std::vector<int> generateRandomIntVector(int length, int max)
     std::unordered_set<int> set{};
     for (int i = 0; i < length; i++)
     {
-        int randNum = std::rand() % max;
+        int randNum = (std::rand() % max) + 1;
         set.insert(randNum);
     }
     return std::vector(set.begin(), set.end());
@@ -164,21 +163,29 @@ std::vector<int> generateRandomIntVector(int length, int max)
 
 void printVec(std::vector<int> vec)
 {
+    int i = 0;
     for (int item : vec)
     {
-        std::cout << item << '\n';
+        std::cout << i << ": " << item << '\n';
+        i++;
     }
+}
+
+void printInt(int val) 
+{
+  std::cout << val << " ";
 }
 
 bool testQuickSort(std::vector<int> vec)
 {
     for (std::vector<int>::iterator iter = vec.begin(); iter != vec.end(); ++iter)
     {
-        if (iter + 1 == vec.end())
+        std::vector<int>::iterator next_iter = iter + 1;
+        if (next_iter == vec.end())
         {
             break;
         }
-        if (*iter > *(iter + 1))
+        if (*iter > *(next_iter))
         {
             return false;
         }
@@ -186,91 +193,46 @@ bool testQuickSort(std::vector<int> vec)
     return true;
 }
 
-void quickSort(std::vector<int> vec, std::vector<int>::iterator start_iter, std::vector<int>::iterator end_iter, int count = 0)
+void quickSort(std::vector<int> &vec)
 {
-    if (vec.size() <= 1 || count >= 250)
+    if (vec.size() <= 1)
     {
         return;
     }
-    // std::vector<int>::iterator l_iter = start_iter - 1;
-    std::vector<int>::iterator p_iter = end_iter;
-    // std::vector<int>::iterator r_iter = start_iter;
-    int p_i = vec.size() - 1;
-    int p_val = vec.at(p_i);
-    std::cout << "p value: " << p_val << std::endl;
-    int l_i = -1;
-    int r_i = 0;
-    int i{0};
-    printVec(vec);
-    while (l_i < r_i && i < 20)
-    {
-        i++;
-        int l_val = l_i >= 0 ? vec.at(l_i) : -1;
-        int r_val = vec.at(r_i);
-        if (l_val > r_val)
-        {
-            int temp = l_val;
-            vec.at(l_i) = r_val;
-            vec.at(r_i) = temp;
-            if (r_i < p_i)
-            {
-                r_i++;
-            }
-            l_i++;
-            continue;
-        }
-        if (r_val > p_val && r_i < p_i)
-        {
-            r_i++;
-            continue;
-        }
-        if (r_i < p_i)
-        {
-            r_i++;
-        }
-        l_i++;
-    }
-    std::cout << '\n';
-    printVec(vec);
-    // while (l_iter != r_iter && i < 200)
-    // {
-    //     i++;
-    //     int l_val = *l_iter;
-    //     int r_val = *r_iter;
-    //     int p_val = *p_iter;
-    //     if (r_val > p_val)
-    //     {
-    //         r_iter++;
-    //         continue;
-    //     }
-    //     if (l_val >= r_val)
-    //     {
-    //         std::vector<int>::iterator temp_iter = r_iter;
-    //         r_iter = l_iter;
-    //         l_iter = temp_iter;
-    //         if (p_iter != r_iter)
-    //         {
-    //             r_iter++;
-    //         }
-    //         l_iter++;
-    //     }
-}
-// printVec(vec);
-// quickSort(vec)
 
-// std::vector<int> leftVec{};
-// std::vector<int> rightVec{};
-// for (std::vector<int>::iterator iter = vec.begin(); iter != l_iter; ++iter)
-// {
-//     leftVec.push_back(*iter);
-// }
-// for (std::vector<int>::iterator iter = r_iter; iter != vec.end(); ++iter)
-// {
-//     rightVec.push_back(*iter);
-// }
-// quickSort(leftVec, count + 1);
-// quickSort(rightVec, count + 1);
-// }
+    std::vector<int>::iterator i_iter = vec.begin() - 1;
+    std::vector<int>::iterator j_iter = vec.begin();
+    std::vector<int>::iterator p_iter = vec.end() - 1;
+    while (j_iter != vec.end() && i_iter != vec.end()) {
+      int i = *i_iter;
+      int j = *j_iter;
+      int p = *p_iter;
+      if (j_iter == p_iter && i_iter == p_iter - 1) 
+      {
+        break;
+      }
+      if (j_iter == p_iter) 
+      {
+        vec.insert(++i_iter, p);
+        vec.pop_back();
+        p_iter = vec.end() - 1;
+        i_iter = vec.begin() -1;
+        j_iter = vec.begin();
+        continue;
+      }
+      if (j < p) 
+      {
+        i = *(++i_iter);
+        if (i > j) 
+        {
+          int temp = j;
+          *j_iter = i;
+          *i_iter = temp;
+        }
+      }
+      j_iter++;
+    }
+}
 
 int main()
 {
@@ -280,18 +242,16 @@ int main()
     // ListNode node2(20, node3);
     // ListNode node1(10, node2);
 
-    std::vector<int> randIntVec = generateRandomIntVector(20, 100);
-    std::vector<int>::iterator l_iter = randIntVec.begin();
-    std::vector<int>::iterator r_iter = randIntVec.end() - 2;
-    quickSort(randIntVec, l_iter, r_iter);
-    // printVec(randIntVec);
-    // std::cout << testQuickSort(randIntVec) << std::endl;
+    std::vector<int> randIntVec = generateRandomIntVector(20, 10);
+    quickSort(randIntVec);
+
+    std::cout << "Passed? ... " << testQuickSort(randIntVec) << '\n';
 
     return 0;
     std::vector<int> vec{10, 20, 30, 40, 50};
     ListNode head = buildDoublyLinkedList(vec);
     insertSequentiallyIntoList(head, 25);
-    printListValues(head);
+    //printListValues(head);
 
     // reverseList(node1);
     // setPreviousOnList(node5);
