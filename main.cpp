@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 class ListNode
 {
-public:
+  public:
     int val{0};
     ListNode *next = NULL;
     ListNode *prev = NULL;
@@ -171,9 +171,9 @@ void printVec(std::vector<int> vec)
     }
 }
 
-void printInt(int val) 
+void printInt(int val)
 {
-  std::cout << val << " ";
+    std::cout << val << " ";
 }
 
 bool testQuickSort(std::vector<int> vec)
@@ -203,34 +203,35 @@ void quickSort(std::vector<int> &vec)
     std::vector<int>::iterator i_iter = vec.begin() - 1;
     std::vector<int>::iterator j_iter = vec.begin();
     std::vector<int>::iterator p_iter = vec.end() - 1;
-    while (j_iter != vec.end() && i_iter != vec.end()) {
-      int i = *i_iter;
-      int j = *j_iter;
-      int p = *p_iter;
-      if (j_iter == p_iter && i_iter == p_iter - 1) 
-      {
-        break;
-      }
-      if (j_iter == p_iter) 
-      {
-        vec.insert(++i_iter, p);
-        vec.pop_back();
-        p_iter = vec.end() - 1;
-        i_iter = vec.begin() -1;
-        j_iter = vec.begin();
-        continue;
-      }
-      if (j < p) 
-      {
-        i = *(++i_iter);
-        if (i > j) 
+    while (j_iter != vec.end() && i_iter != vec.end())
+    {
+        int i = *i_iter;
+        int j = *j_iter;
+        int p = *p_iter;
+        if (j_iter == p_iter && i_iter == p_iter - 1)
         {
-          int temp = j;
-          *j_iter = i;
-          *i_iter = temp;
+            break;
         }
-      }
-      j_iter++;
+        if (j_iter == p_iter)
+        {
+            vec.insert(++i_iter, p);
+            vec.pop_back();
+            p_iter = vec.end() - 1;
+            i_iter = vec.begin() - 1;
+            j_iter = vec.begin();
+            continue;
+        }
+        if (j < p)
+        {
+            i = *(++i_iter);
+            if (i > j)
+            {
+                int temp = j;
+                *j_iter = i;
+                *i_iter = temp;
+            }
+        }
+        j_iter++;
     }
 }
 
@@ -251,7 +252,7 @@ int main()
     std::vector<int> vec{10, 20, 30, 40, 50};
     ListNode head = buildDoublyLinkedList(vec);
     insertSequentiallyIntoList(head, 25);
-    //printListValues(head);
+    // printListValues(head);
 
     // reverseList(node1);
     // setPreviousOnList(node5);
