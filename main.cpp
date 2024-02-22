@@ -49,7 +49,7 @@ void print(ListNode &head)
     while (current != nullptr)
     {
 
-        std::string prevVal = current->prev == nullptr ? "nullptr" : std::to_string(current->prev->val);
+        auto prevVal = current->prev == nullptr ? "nullptr" : std::to_string(current->prev->val);
         std::cout << "prev value: " << prevVal << '\n';
         std::cout << "value: " << current->val << '\n';
         std::string nextVal = current->next == nullptr ? "nullptr" : std::to_string(current->next->val);
@@ -217,57 +217,28 @@ void testSetPreviousOnList(ListNode head)
     std::cout << "Passed Set Previous on List\n";
 }
 
-ListNode buildLinkedList(std::vector<int> const vec)
-{
-    ListNode *end = new ListNode(vec[vec.size() - 1]);
-    ListNode *head = end;
-    for (double i = double(vec.size()) - 2; i >= 0; --i)
-    {
-        ListNode *temp = new ListNode(vec[size_t(i)], *head);
-        head = temp;
-    }
-    return *head;
-}
-
-void testBuildLinkedList()
-{
-    std::vector<int> vec{10, 20, 30, 40, 50};
-    ListNode current = buildLinkedList(vec);
-    ListNode *c = &current;
-    for (auto it = vec.begin(); it != vec.end(); ++it)
-    {
-        if (c->val != *it)
-        {
-            std::cout << "Failed Build Linked List " << c->val << " does not equal " << *it << '\n';
-            return;
-        }
-        c = c->next;
-    }
-    std::cout << "Passed Build Linked List\n";
-}
-
-ListNode buildDoublyLinkedList(std::vector<int> const vec)
+ListNode buildDoublyLinkedList(std::vector<int> vec)
 {
     ListNode *prev = nullptr;
-    ListNode *start = new ListNode(vec[0]);
+    ListNode *start = new ListNode(*vec.begin());
     ListNode *head = start;
-    for (double i = 1; i < double(vec.size()); ++i)
+    for (auto iter = vec.begin() + 1; iter != vec.end(); ++iter)
     {
-        ListNode *temp = new ListNode(vec[size_t(i)]);
+        ListNode *temp = new ListNode(*iter);
         prev = head;
         temp->prev = prev;
         head->next = temp;
         head = temp;
     }
+    head->next = nullptr;
     start->prev = head;
     return *start;
 }
 
-void testBuildDoublyLinkedList()
+void testBuildDoublyLinkedList(std::vector<int> vec)
 {
-    std::vector<int> vec{10, 20, 30, 40, 50};
-    ListNode head = buildDoublyLinkedList(vec);
-    ListNode *c = &head;
+    auto head = buildDoublyLinkedList(vec);
+    auto *c = &head;
     for (auto it = vec.begin(); it != vec.end(); ++it)
     {
         if (c->val != *(it) || (c->prev == nullptr && *it != 10))
@@ -280,7 +251,7 @@ void testBuildDoublyLinkedList()
     std::cout << "Passed Build Doubly Linked List\n";
 }
 
-std::vector<int> generateRandomIntVector(int length, int max)
+auto generateRandomIntVector(int length, int max)
 {
     std::unordered_set<int> set{};
     for (int i = 0; i < length; i++)
@@ -297,9 +268,9 @@ void quickSort(std::vector<int> &vec)
     {
         return;
     }
-    std::vector<int>::iterator p = vec.end() - 1;
-    std::vector<int>::iterator i = vec.begin() - 1;
-    std::vector<int>::iterator j = vec.begin();
+    auto p = vec.end() - 1;
+    auto i = vec.begin() - 1;
+    auto j = vec.begin();
     while (i != p - 1)
     {
         if (*j > *p)
@@ -334,9 +305,9 @@ void quickSort(std::vector<int> &vec)
 void testQuickSort(std::vector<int> vec)
 {
     quickSort(vec);
-    for (std::vector<int>::iterator iter = vec.begin(); iter != vec.end(); ++iter)
+    for (auto iter = vec.begin(); iter != vec.end(); ++iter)
     {
-        std::vector<int>::iterator next_iter = iter + 1;
+        auto next_iter = iter + 1;
         if (next_iter == vec.end())
         {
             break;
@@ -350,22 +321,32 @@ void testQuickSort(std::vector<int> vec)
     std::cout << "Passed Quick Sort \n";
 }
 
-int main()
+void runTests()
 {
-    // Quick sort
     int vec_len{20000};
-    int max_int{100000};
-    std::vector<int> randIntVec = generateRandomIntVector(vec_len, max_int);
-    std::cout << "Sorting... " << std::endl;
-    testQuickSort(randIntVec);
+    int max_int_val{100000};
+    auto rand_numbers = generateRandomIntVector(vec_len, max_int_val);
 
-    testBuildLinkedList();
-    testBuildDoublyLinkedList();
-    std::vector<int> vec{10, 20, 30, 40, 50};
-    ListNode head = buildDoublyLinkedList(vec);
+    std::cout << "Sorting... " << std::endl;
+    testQuickSort(rand_numbers);
+
+    auto numbers = rand_numbers;
+    quickSort(numbers);
+
+    testBuildDoublyLinkedList(numbers);
+
+    ListNode head = buildDoublyLinkedList(numbers);
     testInsertSequentiallyIntoOrderedLinkedList(head, 25);
 
+    head = buildDoublyLinkedList(numbers);
     testSetPreviousOnList(head);
+
+    head = buildDoublyLinkedList(numbers);
     testReverseLinkedList(head);
+}
+
+int main()
+{
+    runTests();
     return 0;
 }
