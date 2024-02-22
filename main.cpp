@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <iostream>
 #include <string>
 #include <unordered_set>
@@ -60,20 +59,7 @@ void print(ListNode &head)
     }
 }
 
-ListNode reverseListCopy(const ListNode &node)
-{
-    ListNode *current = new ListNode(node.val);
-    ListNode *future = node.next;
-    while (future != nullptr)
-    {
-        ListNode *last = new ListNode(current->val, *current->next);
-        current = new ListNode(future->val, *last);
-        future = future->next == nullptr ? nullptr : future->next;
-    }
-    return *current;
-}
-
-void reverseList(ListNode &head)
+void reverseLinkedList(ListNode &head)
 {
     head.prev->next = &head;
     head.prev = nullptr;
@@ -113,10 +99,10 @@ ListNode *getLastNode(ListNode head, std::string direction)
     return lastNode;
 }
 
-void testReverseList(ListNode head)
+void testReverseLinkedList(ListNode head)
 {
     ListNode *original = getLastNode(head, "forward");
-    reverseList(head);
+    reverseLinkedList(head);
     ListNode *reversed = getLastNode(head, "reverse");
     while (reversed->prev->next != nullptr)
     {
@@ -131,7 +117,7 @@ void testReverseList(ListNode head)
     std::cout << "Passed Reverse List\n";
 }
 
-void insertSequentiallyIntoList(ListNode &head, int newVal)
+void insertIntoOrderedLinkedList(ListNode &head, int newVal)
 {
     bool isDescending = head.val > head.next->val;
     bool isAscending = head.val < head.next->val;
@@ -167,46 +153,39 @@ void insertSequentiallyIntoList(ListNode &head, int newVal)
     }
 }
 
-void testInsertSequentiallyIntoListAscending(ListNode head, int val)
+ListNode findNodeByValue(const ListNode head, int val)
 {
-    ListNode *current = &head;
-    int lastVal = -2147483647;
-
-    while (current != nullptr)
+    ListNode current = head;
+    while (current.next != nullptr)
     {
-        if (lastVal > current->val)
+        if (current.val == val)
         {
-            std::cout << "Failed Sequential Insert Ascending"
-                      << " Last: " << lastVal << " Current: " << current->val << '\n';
-            return;
+            return current;
         }
-        current = current->next;
+        current = *current.next;
+    }
+    return current;
+}
+
+void testInsertSequentiallyIntoOrderedLinkedList(ListNode head, int val)
+{
+    insertIntoOrderedLinkedList(head, val);
+    ListNode newNode = findNodeByValue(head, val);
+    int prevVal = newNode.prev->val;
+    int nextVal = newNode.next->val;
+    if (nextVal < val)
+    {
+        std::cout << "Failed Sequential Insert Ascending"
+                  << " Next value: " << nextVal << " Current value: " << newNode.val << '\n';
+        return;
+    }
+    if (prevVal > val)
+    {
+        std::cout << "Failed Sequential Insert Ascending"
+                  << " Prev value: " << prevVal << " Current value: " << newNode.val << '\n';
+        return;
     }
     std::cout << "Passed Sequential Insert Ascending\n";
-}
-
-void testInsertSequentiallyIntoListDescending(ListNode head, int val)
-{
-    ListNode *current = &head;
-    int lastVal = 2147483647;
-
-    while (current != nullptr)
-    {
-        if (lastVal < current->val)
-        {
-            std::cout << "Failed Sequential Insert Descending"
-                      << " Last: " << lastVal << " Current: " << current->val << '\n';
-            return;
-        }
-        current = current->next;
-    }
-    std::cout << "Passed Sequential Insert Descending\n";
-}
-
-void testInsertSequentially(ListNode head, int val)
-{
-    testInsertSequentiallyIntoListAscending(head, val);
-    testInsertSequentiallyIntoListDescending(head, val);
 }
 
 void setPreviousOnList(ListNode &head)
@@ -374,7 +353,9 @@ void testQuickSort(std::vector<int> vec)
 int main()
 {
     // Quick sort
-    std::vector<int> randIntVec = generateRandomIntVector(20000, 100000);
+    int vec_len{20000};
+    int max_int{100000};
+    std::vector<int> randIntVec = generateRandomIntVector(vec_len, max_int);
     std::cout << "Sorting... " << std::endl;
     testQuickSort(randIntVec);
 
@@ -382,9 +363,9 @@ int main()
     testBuildDoublyLinkedList();
     std::vector<int> vec{10, 20, 30, 40, 50};
     ListNode head = buildDoublyLinkedList(vec);
-    testInsertSequentially(head, 25);
+    testInsertSequentiallyIntoOrderedLinkedList(head, 25);
 
     testSetPreviousOnList(head);
-    testReverseList(head);
+    testReverseLinkedList(head);
     return 0;
 }
