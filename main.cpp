@@ -1,13 +1,15 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <unordered_set>
 #include <vector>
+
 class ListNode
 {
   public:
     int val{0};
-    ListNode *next = NULL;
-    ListNode *prev = NULL;
+    ListNode *next = nullptr;
+    ListNode *prev = nullptr;
     ListNode(int value)
     {
         val = value;
@@ -25,52 +27,108 @@ class ListNode
     };
 };
 
-void printListValues(ListNode &head)
+void print(std::vector<int> vec)
+{
+    int i = 0;
+    for (int item : vec)
+    {
+        std::cout << i << ": " << item << '\n';
+        i++;
+    }
+    std::cout << '\n';
+}
+
+void print(int val)
+{
+    std::cout << val << '\n';
+    std::cout << '\n';
+}
+
+void print(ListNode &head)
 {
     ListNode *current = &head;
-    int i = 0;
-    while (current != NULL && i < 10)
+    while (current != nullptr)
     {
 
-        std::string prevVal = current->prev == NULL ? "NULL" : std::to_string(current->prev->val);
+        std::string prevVal = current->prev == nullptr ? "nullptr" : std::to_string(current->prev->val);
         std::cout << "prev value: " << prevVal << '\n';
         std::cout << "value: " << current->val << '\n';
-        std::string nextVal = current->next == NULL ? "NULL" : std::to_string(current->next->val);
+        std::string nextVal = current->next == nullptr ? "nullptr" : std::to_string(current->next->val);
         std::cout << "next value: " << nextVal << '\n';
         std::cout << '\n';
         current = current->next;
-        i++;
     }
 }
 
-ListNode reverseListCopy(ListNode &node)
+ListNode reverseListCopy(const ListNode &node)
 {
     ListNode *current = new ListNode(node.val);
     ListNode *future = node.next;
-    while (future != NULL)
+    while (future != nullptr)
     {
         ListNode *last = new ListNode(current->val, *current->next);
         current = new ListNode(future->val, *last);
-        future = future->next == NULL ? NULL : future->next;
+        future = future->next == nullptr ? nullptr : future->next;
     }
     return *current;
 }
 
-void reverseList(ListNode &node)
+void reverseList(ListNode &head)
 {
-    ListNode *last = NULL;
-    ListNode *current = &node;
-    ListNode *future = node.next;
-    while (future != NULL)
+    head.prev->next = &head;
+    head.prev = nullptr;
+    ListNode *last = head.prev;
+    ListNode *future = head.next;
+    ListNode *current = &head;
+    while (future != nullptr)
     {
-        current->prev = current->next;
+        current->prev = future;
+
         current->next = last;
+
         last = current;
         current = future;
         future = future->next;
     }
-    current->prev = current->next;
-    current->next = last;
+}
+
+ListNode *getLastNode(ListNode head, std::string direction)
+{
+    ListNode *temp = &head;
+    if (direction == "forward")
+    {
+        while (temp->next != nullptr)
+        {
+            temp = temp->next;
+        }
+    }
+    else
+    {
+        while (temp->prev->next != nullptr)
+        {
+            temp = temp->prev;
+        }
+    }
+    ListNode *lastNode{temp};
+    return lastNode;
+}
+
+void testReverseList(ListNode head)
+{
+    ListNode *original = getLastNode(head, "forward");
+    reverseList(head);
+    ListNode *reversed = getLastNode(head, "reverse");
+    while (reversed->prev->next != nullptr)
+    {
+        if (reversed->val != original->val)
+        {
+            std::cout << "Failed Reverse List " << reversed->val << " does not equal " << original->val << '\n';
+            return;
+        }
+        original = original->prev;
+        reversed = reversed->prev;
+    }
+    std::cout << "Passed Reverse List\n";
 }
 
 void insertSequentiallyIntoList(ListNode &head, int newVal)
@@ -84,7 +142,7 @@ void insertSequentiallyIntoList(ListNode &head, int newVal)
     ListNode *current = &head;
     ListNode *next = head.next;
 
-    while (next != NULL)
+    while (next != nullptr)
     {
         int c = current->val;
         int n = next->val;
@@ -96,7 +154,7 @@ void insertSequentiallyIntoList(ListNode &head, int newVal)
         current = next;
         next = current->next;
     }
-    if (current->prev == NULL)
+    if (current->prev == nullptr)
     {
         ListNode *newNode = new ListNode(newVal, *current->next);
         current->next = newNode;
@@ -109,17 +167,75 @@ void insertSequentiallyIntoList(ListNode &head, int newVal)
     }
 }
 
+void testInsertSequentiallyIntoListAscending(ListNode head, int val)
+{
+    ListNode *current = &head;
+    int lastVal = -2147483647;
+
+    while (current != nullptr)
+    {
+        if (lastVal > current->val)
+        {
+            std::cout << "Failed Sequential Insert Ascending"
+                      << " Last: " << lastVal << " Current: " << current->val << '\n';
+            return;
+        }
+        current = current->next;
+    }
+    std::cout << "Passed Sequential Insert Ascending\n";
+}
+
+void testInsertSequentiallyIntoListDescending(ListNode head, int val)
+{
+    ListNode *current = &head;
+    int lastVal = 2147483647;
+
+    while (current != nullptr)
+    {
+        if (lastVal < current->val)
+        {
+            std::cout << "Failed Sequential Insert Descending"
+                      << " Last: " << lastVal << " Current: " << current->val << '\n';
+            return;
+        }
+        current = current->next;
+    }
+    std::cout << "Passed Sequential Insert Descending\n";
+}
+
+void testInsertSequentially(ListNode head, int val)
+{
+    testInsertSequentiallyIntoListAscending(head, val);
+    testInsertSequentiallyIntoListDescending(head, val);
+}
+
 void setPreviousOnList(ListNode &head)
 {
     ListNode *last = &head;
     ListNode *current = head.next;
-    while (current != NULL)
+    while (current != nullptr)
     {
         current->prev = last;
         last = current;
         current = current->next;
     }
     head.prev = current;
+}
+
+void testSetPreviousOnList(ListNode head)
+{
+    setPreviousOnList(head);
+    ListNode *current = head.next;
+    while (current != nullptr)
+    {
+        if (current->prev == nullptr)
+        {
+            std::cout << "Failed Set Previous on List\n";
+            return;
+        }
+        current = current->next;
+    }
+    std::cout << "Passed Set Previous on List\n";
 }
 
 ListNode buildLinkedList(std::vector<int> const vec)
@@ -134,9 +250,26 @@ ListNode buildLinkedList(std::vector<int> const vec)
     return *head;
 }
 
+void testBuildLinkedList()
+{
+    std::vector<int> vec{10, 20, 30, 40, 50};
+    ListNode current = buildLinkedList(vec);
+    ListNode *c = &current;
+    for (auto it = vec.begin(); it != vec.end(); ++it)
+    {
+        if (c->val != *it)
+        {
+            std::cout << "Failed Build Linked List " << c->val << " does not equal " << *it << '\n';
+            return;
+        }
+        c = c->next;
+    }
+    std::cout << "Passed Build Linked List\n";
+}
+
 ListNode buildDoublyLinkedList(std::vector<int> const vec)
 {
-    ListNode *prev = NULL;
+    ListNode *prev = nullptr;
     ListNode *start = new ListNode(vec[0]);
     ListNode *head = start;
     for (double i = 1; i < double(vec.size()); ++i)
@@ -147,7 +280,25 @@ ListNode buildDoublyLinkedList(std::vector<int> const vec)
         head->next = temp;
         head = temp;
     }
+    start->prev = head;
     return *start;
+}
+
+void testBuildDoublyLinkedList()
+{
+    std::vector<int> vec{10, 20, 30, 40, 50};
+    ListNode head = buildDoublyLinkedList(vec);
+    ListNode *c = &head;
+    for (auto it = vec.begin(); it != vec.end(); ++it)
+    {
+        if (c->val != *(it) || (c->prev == nullptr && *it != 10))
+        {
+            std::cout << "Failed Build Doubly Linked List " << c->val << " does not equal " << *it << '\n';
+            return;
+        }
+        c = c->next;
+    }
+    std::cout << "Passed Build Doubly Linked List\n";
 }
 
 std::vector<int> generateRandomIntVector(int length, int max)
@@ -161,23 +312,49 @@ std::vector<int> generateRandomIntVector(int length, int max)
     return std::vector(set.begin(), set.end());
 }
 
-void printVec(std::vector<int> vec)
+void quickSort(std::vector<int> &vec)
 {
-    int i = 0;
-    for (int item : vec)
+    if (!vec.size())
     {
-        std::cout << i << ": " << item << '\n';
-        i++;
+        return;
+    }
+    std::vector<int>::iterator p = vec.end() - 1;
+    std::vector<int>::iterator i = vec.begin() - 1;
+    std::vector<int>::iterator j = vec.begin();
+    while (i != p - 1)
+    {
+        if (*j > *p)
+        {
+            ++j;
+            continue;
+        }
+        else if (*i > *j)
+        {
+            int temp{*j};
+            *j = *i;
+            *i = temp;
+        }
+        else
+        {
+            ++i;
+        }
+
+        if (j == p)
+        {
+            vec.insert(i + 1, *p);
+            vec.pop_back();
+            p = vec.end() - 1;
+            i = vec.begin() - 1;
+            j = vec.begin();
+            continue;
+        }
+        ++j;
     }
 }
 
-void printInt(int val)
+void testQuickSort(std::vector<int> vec)
 {
-    std::cout << val << " ";
-}
-
-bool testQuickSort(std::vector<int> vec)
-{
+    quickSort(vec);
     for (std::vector<int>::iterator iter = vec.begin(); iter != vec.end(); ++iter)
     {
         std::vector<int>::iterator next_iter = iter + 1;
@@ -187,75 +364,27 @@ bool testQuickSort(std::vector<int> vec)
         }
         if (*iter > *(next_iter))
         {
-            return false;
+            std::cout << "Failed Quick Sort " << *iter << " is greater than " << *(next_iter) << '\n';
+            return;
         }
     }
-    return true;
-}
-
-void quickSort(std::vector<int> &vec)
-{
-    if (vec.size() <= 1)
-    {
-        return;
-    }
-
-    std::vector<int>::iterator i_iter = vec.begin() - 1;
-    std::vector<int>::iterator j_iter = vec.begin();
-    std::vector<int>::iterator p_iter = vec.end() - 1;
-    while (j_iter != vec.end() && i_iter != vec.end())
-    {
-        int i = *i_iter;
-        int j = *j_iter;
-        int p = *p_iter;
-        if (j_iter == p_iter && i_iter == p_iter - 1)
-        {
-            break;
-        }
-        if (j_iter == p_iter)
-        {
-            vec.insert(++i_iter, p);
-            vec.pop_back();
-            p_iter = vec.end() - 1;
-            i_iter = vec.begin() - 1;
-            j_iter = vec.begin();
-            continue;
-        }
-        if (j < p)
-        {
-            i = *(++i_iter);
-            if (i > j)
-            {
-                int temp = j;
-                *j_iter = i;
-                *i_iter = temp;
-            }
-        }
-        j_iter++;
-    }
+    std::cout << "Passed Quick Sort \n";
 }
 
 int main()
 {
-    // ListNode node5(50);
-    // ListNode node4(40, node5);
-    // ListNode node3(30, node4);
-    // ListNode node2(20, node3);
-    // ListNode node1(10, node2);
+    // Quick sort
+    std::vector<int> randIntVec = generateRandomIntVector(20000, 100000);
+    std::cout << "Sorting... " << std::endl;
+    testQuickSort(randIntVec);
 
-    std::vector<int> randIntVec = generateRandomIntVector(20, 10);
-    quickSort(randIntVec);
-
-    std::cout << "Passed? ... " << testQuickSort(randIntVec) << '\n';
-
-    return 0;
+    testBuildLinkedList();
+    testBuildDoublyLinkedList();
     std::vector<int> vec{10, 20, 30, 40, 50};
     ListNode head = buildDoublyLinkedList(vec);
-    insertSequentiallyIntoList(head, 25);
-    // printListValues(head);
+    testInsertSequentially(head, 25);
 
-    // reverseList(node1);
-    // setPreviousOnList(node5);
-    // printListValues(node);
+    testSetPreviousOnList(head);
+    testReverseList(head);
     return 0;
 }
