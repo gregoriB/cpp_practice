@@ -78,7 +78,7 @@ void reverseLinkedList(ListNode &head)
     }
 }
 
-ListNode *getLastNode(ListNode head, std::string direction)
+ListNode &getLastNode(ListNode head, std::string direction)
 {
     ListNode *temp = &head;
     if (direction == "forward")
@@ -96,23 +96,23 @@ ListNode *getLastNode(ListNode head, std::string direction)
         }
     }
     ListNode *lastNode{temp};
-    return lastNode;
+    return *lastNode;
 }
 
 void testReverseLinkedList(ListNode head)
 {
-    ListNode *original = getLastNode(head, "forward");
+    ListNode original = getLastNode(head, "forward");
     reverseLinkedList(head);
-    ListNode *reversed = getLastNode(head, "reverse");
-    while (reversed->prev->next != nullptr)
+    ListNode reversed = getLastNode(head, "reverse");
+    while (reversed.prev->next != nullptr)
     {
-        if (reversed->val != original->val)
+        if (reversed.val != original.val)
         {
-            std::cout << "Failed Reverse List " << reversed->val << " does not equal " << original->val << '\n';
+            std::cout << "Failed Reverse List " << reversed.val << " does not equal " << original.val << '\n';
             return;
         }
-        original = original->prev;
-        reversed = reversed->prev;
+        original = *original.prev;
+        reversed = *reversed.prev;
     }
     std::cout << "Passed Reverse List\n";
 }
@@ -269,36 +269,36 @@ void quickSort(std::vector<int> &vec)
         return;
     }
     auto p = vec.end() - 1;
-    auto i = vec.begin() - 1;
-    auto j = vec.begin();
-    while (i != p - 1)
+    auto l = vec.begin() - 1;
+    auto r = vec.begin();
+    while (l != p - 1)
     {
-        if (*j > *p)
+        if (*r > *p)
         {
-            ++j;
+            ++r;
             continue;
         }
-        else if (*i > *j)
+        else if (*l > *r)
         {
-            int temp{*j};
-            *j = *i;
-            *i = temp;
+            int temp{*r};
+            *r = *l;
+            *l = temp;
         }
         else
         {
-            ++i;
+            ++l;
         }
 
-        if (j == p)
+        if (r == p)
         {
-            vec.insert(i + 1, *p);
+            vec.insert(l + 1, *p);
             vec.pop_back();
             p = vec.end() - 1;
-            i = vec.begin() - 1;
-            j = vec.begin();
+            l = vec.begin() - 1;
+            r = vec.begin();
             continue;
         }
-        ++j;
+        ++r;
     }
 }
 
