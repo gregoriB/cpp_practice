@@ -253,3 +253,62 @@ void testBuildDoublyLinkedList(std::vector<int> vec)
     }
     std::cout << "Passed Build Doubly Linked List\n";
 }
+
+ListNode getMiddleNode(ListNode &head)
+{
+    ListNode *slow = &head;
+    ListNode *fast = &head;
+    while (fast != nullptr && fast->next != nullptr)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    return *slow;
+}
+
+void testGetMiddleNodeEven()
+{
+    std::vector<int> vec{1, 2, 3, 4, 5, 6};
+    auto head = buildDoublyLinkedList(vec);
+    auto middle = getMiddleNode(head);
+    if (middle.val != 4)
+    {
+        std::cout << "Failed Get Middle Node " << middle.val << " does not equal " << 4 << '\n';
+        return;
+    }
+    std::cout << "Passed Get Middle Node Even" << '\n';
+}
+
+void testGetMiddleNodeOdd()
+{
+    std::vector<int> vec{1, 2, 3, 4, 5, 6, 7};
+    auto head = buildDoublyLinkedList(vec);
+    auto middle = getMiddleNode(head);
+    if (middle.val != 4)
+    {
+        std::cout << "Failed Get Middle Node " << middle.val << " does not equal " << 4 << '\n';
+        return;
+    }
+    std::cout << "Passed Get Middle Node Odd" << '\n';
+}
+
+void runLinkedListTests(std::vector<int> numbers)
+{
+    testBuildDoublyLinkedList(numbers);
+
+    ListNode head = buildDoublyLinkedList(numbers);
+    testInsertSequentiallyIntoOrderedLinkedList(head, 25);
+
+    head = buildDoublyLinkedList(numbers);
+    testSetPreviousOnList(head);
+
+    head = buildDoublyLinkedList(numbers);
+    testDeleteFromList(numbers, head);
+
+    head = buildDoublyLinkedList(numbers);
+    testReverseLinkedList(head);
+
+    testGetMiddleNodeEven();
+    testGetMiddleNodeOdd();
+}

@@ -41,8 +41,9 @@ void quickSort(std::vector<int> &vec)
     }
 }
 
-void testQuickSort(std::vector<int> vec)
+void runQuickSortTests(std::vector<int> vec)
 {
+    std::cout << "Sorting... " << std::endl;
     quickSort(vec);
     for (auto iter = vec.begin(); iter != vec.end(); ++iter)
     {

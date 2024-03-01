@@ -1,7 +1,7 @@
+#include "lib/binary_tree.h"
 #include "lib/linked_list.h"
 #include "lib/quick_sort.h"
 
-#include <iostream>
 #include <unordered_set>
 #include <vector>
 
@@ -16,31 +16,25 @@ auto generateRandomIntVector(int length, int max)
     return std::vector(set.begin(), set.end());
 }
 
+void runBinaryTreeTests()
+{
+    std::vector<int> vec{56, 68, 34, 45, 74, 86, 62, 39, 21};
+    testBuildBinaryTree(vec);
+}
+
 void runTests()
 {
     int vec_len{20000};
     int max_int_val{100000};
     auto rand_numbers = generateRandomIntVector(vec_len, max_int_val);
 
-    std::cout << "Sorting... " << std::endl;
-    testQuickSort(rand_numbers);
+    runQuickSortTests(rand_numbers);
 
     auto numbers = rand_numbers;
     quickSort(numbers);
 
-    testBuildDoublyLinkedList(numbers);
-
-    ListNode head = buildDoublyLinkedList(numbers);
-    testInsertSequentiallyIntoOrderedLinkedList(head, 25);
-
-    head = buildDoublyLinkedList(numbers);
-    testSetPreviousOnList(head);
-
-    head = buildDoublyLinkedList(numbers);
-    testDeleteFromList(numbers, head);
-
-    head = buildDoublyLinkedList(numbers);
-    testReverseLinkedList(head);
+    runLinkedListTests(numbers);
+    runBinaryTreeTests();
 }
 
 int main()

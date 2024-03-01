@@ -3,4 +3,4 @@
 
 void quickSort(std::vector<int> &vec);
 
-void testQuickSort(std::vector<int> vec);
+void runQuickSortTests(std::vector<int> vec);
