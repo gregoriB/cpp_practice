@@ -105,9 +105,10 @@ TreeNode findTreeNodeParent(const TreeNode &head, int val)
     return start;
 }
 
-bool testTreeNode(TreeNode &head)
+bool testTreeNodes(TreeNode &head)
 {
-    bool passed{false};
+    bool passed_left{false};
+    bool passed_right{false};
     TreeNode *start = &head;
     if (start == nullptr)
     {
@@ -119,7 +120,7 @@ bool testTreeNode(TreeNode &head)
                   << " is the right and should be greater than the head value: " << head.val << '\n';
         return false;
     }
-    passed = testTreeNode(*head.right);
+    passed_right = testTreeNodes(*head.right);
 
     if (head.left != nullptr && head.left->val > head.val)
     {
@@ -127,23 +128,23 @@ bool testTreeNode(TreeNode &head)
                   << " is the left and should be less than the head value: " << head.val << '\n';
         return false;
     }
-    passed = testTreeNode(*head.left);
+    passed_left = testTreeNodes(*head.left);
 
     if ((head.right && head.right->val == head.val) || (head.left && head.left->val == head.val))
     {
         std::cout << "Failed Build Binary Tree " << head.val << " is a duplicate entry" << '\n';
         return false;
     }
-    return passed;
+    return passed_right && passed_left;
 }
 
 void testBuildBinaryTree(std::vector<int> vec)
 {
     // std::vector<int> vec{ 56, 68, 34, 45, 74, 86, 62, 39, 21 };
     TreeNode node = buildBinaryTree(vec);
-    bool passed = testTreeNode(node);
+    bool passed = testTreeNodes(node);
     if (passed)
     {
-        std::cout << "Passed Build Binary Tree!" << '\n';
+        std::cout << "Passed Build Binary Tree" << '\n';
     }
 }
