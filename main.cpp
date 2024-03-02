@@ -8,7 +8,7 @@
 auto generateRandomIntVector(int length, int max)
 {
     std::unordered_set<int> set{};
-    for (int i = 0; i < length; i++)
+    while (set.size() < std::size_t(length))
     {
         int randNum = (std::rand() % max) + 1;
         set.insert(randNum);
