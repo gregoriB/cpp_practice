@@ -140,8 +140,8 @@ bool testTreeNodes(TreeNode &head)
 
 void testBuildBinaryTree(std::vector<int> vec)
 {
-    // std::vector<int> vec{ 56, 68, 34, 45, 74, 86, 62, 39, 21 };
-    TreeNode node = buildBinaryTree(vec);
+    std::vector<int> vec1{56, 68, 34, 45, 74, 86, 62, 39, 21};
+    TreeNode node = buildBinaryTree(vec1);
     bool passed = testTreeNodes(node);
     if (passed)
     {

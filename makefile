@@ -1,7 +1,14 @@
 CXX = clang++
-CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors -std=c++20
+CXXFLAGS += \
+	-Wall -Wextra -Werror -pedantic-errors -std=c++20 \
+	-Wno-unused-variable -Wno-unused-parameter -Wno-unused-function
 
-SRCS = main.cpp lib/linked_list.cpp lib/print.cpp lib/quick_sort.cpp lib/binary_tree.cpp
+SRCS = main.cpp \
+	lib/linked_list.cpp \
+	lib/print.cpp \
+	lib/quick_sort.cpp \
+	lib/binary_tree.cpp 
+
 OBJS = $(SRCS:.cpp=.o)
 TARGET = main
 
